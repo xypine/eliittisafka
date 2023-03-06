@@ -1,3 +1,4 @@
+use actix_web::rt::task::spawn_blocking;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 
@@ -125,4 +126,11 @@ pub fn get_menu() -> Result<Menu> {
     let items = extract_data(document, true)?;
     println!("Menu extracted succesfully!");
     Ok(items)
+}
+
+/// For use in async contexts
+pub async fn get_menu_async() -> Result<Menu> {
+    spawn_blocking(move || get_menu())
+        .await
+        .expect("failed to await blocking task")
 }
